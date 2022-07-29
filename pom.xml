@@ -16,11 +16,12 @@
 		<java.version>11</java.version>
 	</properties>
 	<dependencies>
-		<!--dependency>
-		    <groupId>io.gatling</groupId>
-		    <artifactId>jsonpath_2.12</artifactId>
-		    <version>0.7.0</version>
-		</dependency-->
+
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.6</version>
+		</dependency>
 		<dependency>
 			<groupId>com.google.jimfs</groupId>
 			<artifactId>jimfs</artifactId>

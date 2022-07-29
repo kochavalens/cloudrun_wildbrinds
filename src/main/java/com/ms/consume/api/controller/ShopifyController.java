@@ -1,6 +1,7 @@
 package com.ms.consume.api.controller;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,6 +12,8 @@ import java.util.Properties;
 
 //import org.json.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.apache.commons.io.FileUtils;
+import org.json.CDL;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 //import org.json.simple.JSONValue;
@@ -47,7 +50,6 @@ import com.google.gson.Gson;
 //import com.google.gson.JsonObject;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
-
 //import net.minidev.json.JSONArray;
 
 //import net.minidev.json.JSONArray;
@@ -59,7 +61,7 @@ import com.jayway.jsonpath.JsonPath;
 @RequestMapping({ "/api/shopify" })
 public class ShopifyController {
 
-	private static Logger log = LoggerFactory.getLogger(ZendeskController.class);
+	private static Logger log = LoggerFactory.getLogger(ShopifyController.class);
 
 	private RestTemplate restTemplate = new RestTemplate();
 
@@ -74,6 +76,7 @@ public class ShopifyController {
 		Object response = null;
 		JSONObject json__ = null;
 		String jsonResultToBucket = "";
+		String csv = "";
 
 		try {
 //			Gson shopify = new Gson();			
@@ -119,8 +122,8 @@ public class ShopifyController {
 			JSONArray jArray = (JSONArray) json__.get(list);
 
 			ObjectMapper objectMapper = new ObjectMapper();
-			ArrayList<String> numList = new ArrayList<>();			
-			
+			ArrayList<String> numList = new ArrayList<>();
+			//numList.add("{\"products\":");
 			for (int i = 0; i < jArray.size(); i++) {
 				JsonNode node = objectMapper.readValue(jArray.get(i).toString(), JsonNode.class);
 				numList.add("{");
@@ -129,7 +132,9 @@ public class ShopifyController {
 					String typeNested = filter.get(j).toString();
 					System.out.println(typeNested);
 					String[] nested = typeNested.split("#");
-					if(nested.length > 1) {
+					if(nested.length > 2) {
+					
+					}else if(nested.length > 1) {
 						JsonNode child = node.get(nested[0]);
 						if (child.get(nested[1]) != null) {
 							JsonNode childField = child.get(nested[1]);
@@ -147,7 +152,7 @@ public class ShopifyController {
 				}			
 				numList.add("}");
 			}
-
+			//numList.add("}");
 //			for (int i = 0; i < jArray.size(); i++) {				
 //				JsonNode node = objectMapper.readValue(jArray.get(i).toString(), JsonNode.class);
 //				numList.add("{");
@@ -171,19 +176,34 @@ public class ShopifyController {
 			ObjectMapper mapper = new ObjectMapper();
 
 			jsonResultToBucket = mapper.writeValueAsString(ob);
-			jsonResultToBucket = jsonResultToBucket.replace("\\", "").replace("\"[", "[").replace("]\"", "]");
+			//jsonResultToBucket = jsonResultToBucket.replace("\\", "").replace("\"[", "[").replace("]\"", "]");
+			jsonResultToBucket = "{" + "\"products" + "\":" + jsonResultToBucket.replace("\"[","[").replace("]\"","]").replace("\\","") + "}"; 
 			System.out.println("jsonResultToBucket = " + jsonResultToBucket);
+			
+			org.json.JSONObject output;
+			try {
+				output = new org.json.JSONObject(jsonResultToBucket);
+				org.json.JSONArray docs = output.getJSONArray("products");
+				File file = new File("listProducts.csv");
+				csv = CDL.toString(docs);
+				FileUtils.writeStringToFile(file, csv);
+		        System.out.println("Data has been Sucessfully Writeen to "+ file);
+		        System.out.println(csv);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
 
 			// Upload File Cloud Storage
 			Credentials credentials = GoogleCredentials.fromStream(new FileInputStream("c:/bbdd-wild-lama-b1759cfc195e.json"));
 			//Credentials credentials = GoogleCredentials.fromStream(new FileInputStream("path/to/file"));
 			Storage storage = StorageOptions.newBuilder().setCredentials(credentials).setProjectId("bbdd-wild-lama").build().getService();
 			
-			String contentType = "application/json";
+			String contentType = "application/csv";
 			StorageClass storageClass = StorageClass.STANDARD;
 			storage = StorageOptions.getDefaultInstance().getService();
 			Bucket bucket = storage.create(BucketInfo.of("sample-wildbrands"));
-			String value = jsonResultToBucket.toString().replace("\\", "");
+			//String value = jsonResultToBucket.toString().replace("\\", "");
+			String value = csv;
 			byte[] bytes = value.getBytes();
 			Blob blob = bucket.create("shopify_list_products", bytes, contentType);
 			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -193,7 +213,7 @@ public class ShopifyController {
 			e.printStackTrace();
 		}
 
-		return jsonResultToBucket;
+		return csv;
 
 	}
 
