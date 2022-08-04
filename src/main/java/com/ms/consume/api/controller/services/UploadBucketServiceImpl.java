@@ -25,26 +25,17 @@ public class UploadBucketServiceImpl implements IUploadBucketService {
 	public Object uploadBucket(String nameFile, String nameBucket, String csv) {
 		
 		Credentials credentials = null;
-		try {
-			
-			credentials = GoogleCredentials.fromStream(new FileInputStream("c:/bbdd-wild-lama-b1759cfc195e.json"));
-			Storage storage = StorageOptions.newBuilder().setCredentials(credentials).setProjectId("bbdd-wild-lama").build().getService();
-			
-			String contentType = "application/csv";
-			StorageClass storageClass = StorageClass.STANDARD;
-			storage = StorageOptions.getDefaultInstance().getService();
-			Bucket bucket = storage.create(BucketInfo.of(nameBucket));
-			String value = csv;
-			byte[] bytes = value.getBytes();
-			Blob blob = bucket.create(nameFile, bytes, contentType);
-			
-		} catch (FileNotFoundException e) {
-			log.debug("FileNotFoundException {}", e.toString());			
-			e.printStackTrace();
-		} catch (IOException e) {
-			log.debug("IOException {}", e.toString());
-			e.printStackTrace();
-		}
+		//credentials = GoogleCredentials.fromStream(new FileInputStream("c:/bbdd-wild-lama-b1759cfc195e.json"));
+		Storage storage = StorageOptions.newBuilder().setProjectId("bbdd-wild-lama").build().getService();
+		//Storage storage = StorageOptions.newBuilder().setCredentials(credentials).setProjectId("bbdd-wild-lama").build().getService();
+		
+		String contentType = "application/csv";
+		StorageClass storageClass = StorageClass.STANDARD;
+		storage = StorageOptions.getDefaultInstance().getService();
+		Bucket bucket = storage.create(BucketInfo.of(nameBucket));
+		String value = csv;
+		byte[] bytes = value.getBytes();
+		Blob blob = bucket.create(nameFile, bytes, contentType);
 		return nameFile;
 		
 	}

@@ -11,7 +11,7 @@ public class MsConsumeApiApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MsConsumeApiApplication.class, args);
 	}
-	
+
 	@Bean
 	public RestTemplate restTemplate() {
 		return new RestTemplate();

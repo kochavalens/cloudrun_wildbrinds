@@ -41,8 +41,35 @@ public class FilterSchemaServiceImpl implements IFilterSchemaService {
 					String typeNested = filter.get(j).toString();
 					System.out.println(typeNested);
 					String[] nested = typeNested.split("#");
-					if (nested.length > 2) {
-
+					if (nested.length == 5) {
+						JsonNode child = node.get(nested[0]);
+						if (child.get(nested[1]) != null) {
+							JsonNode childField = child.get(nested[1]);
+							if (childField.get(nested[2]) != null) {
+								JsonNode childField1 = childField.get(nested[2]);
+								if (childField1.get(nested[3]) != null) {
+									JsonNode childField2 = childField1.get(nested[3]);
+									if (childField2.get(nested[4]) != null) {
+										JsonNode childField4 = childField2.get(nested[4]);
+										String field = childField4.asText();
+										numList.add("\"" + nested[0] + "_" + nested[1] + "_" + nested[2] + "_" + nested[3] + "_" + nested[4] + "\":" + field);
+									} else {
+										String field = "null";
+										numList.add("\"" + nested[0] + "_" + nested[1] + "_" + nested[2] + "_" + nested[3] + "_" + nested[4] + "\":" + field);										
+									}
+								} else {
+									String field = "null";
+									numList.add("\"" + nested[0] + "\":" + "\"" + "null" + "\"");
+								}														
+							} else {
+								String field = "null";
+								numList.add("\"" + nested[0] + "\":" + "\"" + "null" + "\"");
+							}																				
+						} else {
+							String field = "null";
+							numList.add("\"" + nested[0] + "\":" + "\"" + "null" + "\"");
+						}										
+						
 					} else if (nested.length > 1) {
 						JsonNode child = node.get(nested[0]);
 						if (child.get(nested[1]) != null) {

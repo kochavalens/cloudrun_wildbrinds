@@ -7,6 +7,6 @@ RUN mvn package -DskipTests
 
 FROM openjdk:12.0.2
 WORKDIR /app
-COPY --from=MAVEN_BUILD /build/target/extractor-0.0.1-SNAPSHOT.jar /app
+COPY --from=MAVEN_BUILD /build/target/ms-consume-api-0.0.1-SNAPSHOT.jar /app
 COPY --from=MAVEN_BUILD /build/lib/ /app/
-ENTRYPOINT ["java", "-cp", "/app/extractor-0.0.1-SNAPSHOT.jar", "-Dloader.path=/app", "org.springframework.boot.loader.PropertiesLauncher"]
+ENTRYPOINT ["java", "-cp", "/app/ms-consume-api-0.0.1-SNAPSHOT.jar", "-Dloader.path=/app", "org.springframework.boot.loader.PropertiesLauncher"]
