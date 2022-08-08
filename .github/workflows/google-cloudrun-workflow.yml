@@ -1,0 +1,43 @@
+# .github/workflows/google-cloudrun-docker.yml
+
+name: Deploy to Cloud Run
+on:
+  push:
+    branches:
+      - main
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  GCP_SA_SCHEDULER_MANAGER: ${{ secrets.GCP_SA_CONSUME_API }}
+  SERVICE_NAME: ms-consume-api
+  RUN_REGION: us-east1
+  MAX_INSTANCES: 1
+  CONCURRENCY: 10
+  PORT: 8080
+  TIMEOUT: 360
+  CONFIG_BUCKET: wildbrands-data-project
+  CONFIG_OBJECT: sys/conf.json
+
+
+jobs:
+
+  deploy:
+    name: Deploy to Cloud Run
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # Setup gcloud CLI
+      - uses: google-github-actions/setup-gcloud@v0
+        with:
+          version: "290.0.1"
+          service_account_key: ${{ secrets.GCP_SA_KEY_JSON }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      # Build and push image to Google Container Registry
+      - name: Build
+        run: gcloud builds submit --tag gcr.io/$PROJECT_ID/$PROJECT_ID:$GITHUB_SHA
+
+      - name: Deploy
+        run: gcloud run deploy $SERVICE_NAME --image gcr.io/$PROJECT_ID/$PROJECT_ID:$GITHUB_SHA --platform managed --region $RUN_REGION --max-instances $MAX_INSTANCES --port $PORT --service-account $GCP_SA_SCHEDULER_MANAGER --timeout $TIMEOUT --concurrency $CONCURRENCY --set-env-vars CONFIG_BUCKET=$CONFIG_BUCKET,CONFIG_OBJECT=$CONFIG_OBJECT
