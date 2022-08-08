@@ -76,7 +76,110 @@ public class ConsumeAPIController {
 	@PostMapping("/consumeApis")
 	public String consumeAPIS(@RequestBody String request) {
 		
-		return request;
+		Object response = null;
+		JSONObject jsonBody = null;
+		String jsonResultToBucket = "";
+		String csv = "";
+		Object responseFilter = "";
+		Object uploadBucket = "";
+		Object loadBigQuery = "";
+
+		String client_id = "";
+		String client_password = "";
+		String token = "";
+		String username = "";
+		String password = "";
+
+		try {
+			String rqBody = request.toString();
+			JSONParser parser = new JSONParser();
+			// Object jsonrow = parser.parse(rqBody);
+			JSONObject jsonrow = (JSONObject) parser.parse(String.valueOf(rqBody));
+
+			// CREDENTIAL AUTHORIZATION
+			client_id = (String) jsonrow.get("client_id");
+			client_password = (String) jsonrow.get("client_password");
+			token = (String) jsonrow.get("access_token");
+
+			username = (String) jsonrow.get("username");
+			password = (String) jsonrow.get("password");
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("X-Shopify-Access-Token", token);
+			headers.setBasicAuth(username, password);
+			HttpEntity requestEntity = new HttpEntity(headers);
+
+			Map<String, String> vars = new HashMap<>();
+			vars.put("client_id", client_id);
+			vars.put("client_password", client_password);
+			////////////////////////////////////////////////////////////////////////////////////////////////
+
+			// ENDPOINT
+			String url = (String) jsonrow.get("url");
+			String body = (String) jsonrow.get("body");
+			////////////////////////////////////////////////////////////////////////////////////////////////
+
+			// SCHEMA
+			String enableBucket = (String) jsonrow.get("enableBucket");
+			String enableBigQuery = (String) jsonrow.get("enableBigQuery");
+			String nameFile = (String) jsonrow.get("nameFile");
+			String nameBucket = (String) jsonrow.get("nameBucket");
+			String nameDataset = (String) jsonrow.get("nameDataset");
+			String nameTable = (String) jsonrow.get("nameTable");
+			JSONObject schema = (JSONObject) jsonrow.get("schema");
+			Object list = schema.get("list");
+			JSONArray filter = (JSONArray) schema.get("filter");
+			////////////////////////////////////////////////////////////////////////////////////////////////
+			
+			System.out.println("url: " + url);
+			System.out.println("schema: " + schema);
+			System.out.println("list: " + list);
+			System.out.println("filter: " + filter);
+
+			// Consume API External
+			response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, Object.class, vars);
+			
+			System.out.println("response: " + response);
+
+//			ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+//			String responseJson = ow.writeValueAsString(response);
+//			// System.out.println("responseJson: " + responseJson);
+//
+//			JSONParser parser_ = new JSONParser();
+//			JSONObject jsonO = (JSONObject) parser_.parse(responseJson);
+//
+//			jsonBody = new JSONObject();
+//			jsonBody = (JSONObject) jsonO.get("body");
+//			System.out.println("jsonBody: " + jsonBody);
+			////////////////////////////////////////////////////////////////////////////////////////////////
+
+//			JsonFactory factory = new JsonFactory();
+//			ObjectMapper mapper = new ObjectMapper(factory);
+//			JsonNode rootNode = mapper.readTree(jsonBody.toString());
+			//traverse(rootNode, 1);
+
+			// parse(jsonBody.toString());
+
+			// Filter API
+//			responseFilter = filterSchemaServiceImpl.filterSchema(list, filter, jsonBody);
+//			// Upload Bucket
+//			if (enableBucket.equals("ON")) {
+//				uploadBucket = uploadBucketServiceImpl.uploadBucket(nameFile, nameBucket, responseFilter.toString());
+//			}
+//
+//			// load BigQuery
+//			if (enableBigQuery.equals("ON")) {
+//				loadBigQuery = loadBigQueryServiceImpl.loadBigQuery(filter, nameFile, nameBucket, nameDataset,
+//						nameTable);
+//			}
+
+		} catch (Exception e) {
+			log.debug("Exception {}", e.toString());
+			e.printStackTrace();
+		}
+
+		return response.toString();
+
 		
 	}
 
