@@ -131,9 +131,16 @@ public class ConsumeAPIController {
 			JSONArray filter = (JSONArray) schema.get("filter"); 
 			////////////////////////////////////////////////////////////////////////////////////////////////
 			
+			System.out.println("url: " + url);
+			System.out.println("schema: " + schema);
+			System.out.println("list: " + list);
+			System.out.println("filter: " + filter);
+
 			// Consume API External
 			response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, Object.class, vars);
 			
+			System.out.println("response: " + response);
+
 			ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 			String responseJson = ow.writeValueAsString(response);
 			//System.out.println("responseJson: " + responseJson);
@@ -143,6 +150,7 @@ public class ConsumeAPIController {
 
 			jsonBody = new JSONObject();
 			jsonBody = (JSONObject) jsonO.get("body");
+			System.out.println("jsonBody: " + jsonBody);
 			////////////////////////////////////////////////////////////////////////////////////////////////
 			
 			//parse(jsonBody.toString());
