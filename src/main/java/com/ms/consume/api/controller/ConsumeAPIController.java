@@ -141,44 +141,44 @@ public class ConsumeAPIController {
 			
 			System.out.println("response: " + response);
 
-//			ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-//			String responseJson = ow.writeValueAsString(response);
-//			// System.out.println("responseJson: " + responseJson);
-//
-//			JSONParser parser_ = new JSONParser();
-//			JSONObject jsonO = (JSONObject) parser_.parse(responseJson);
-//
-//			jsonBody = new JSONObject();
-//			jsonBody = (JSONObject) jsonO.get("body");
-//			System.out.println("jsonBody: " + jsonBody);
+			ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+			String responseJson = ow.writeValueAsString(response);
+			// System.out.println("responseJson: " + responseJson);
+
+			JSONParser parser_ = new JSONParser();
+			JSONObject jsonO = (JSONObject) parser_.parse(responseJson);
+
+			jsonBody = new JSONObject();
+			jsonBody = (JSONObject) jsonO.get("body");
+			System.out.println("jsonBody: " + jsonBody);
 			////////////////////////////////////////////////////////////////////////////////////////////////
 
-//			JsonFactory factory = new JsonFactory();
-//			ObjectMapper mapper = new ObjectMapper(factory);
-//			JsonNode rootNode = mapper.readTree(jsonBody.toString());
+			JsonFactory factory = new JsonFactory();
+			ObjectMapper mapper = new ObjectMapper(factory);
+			JsonNode rootNode = mapper.readTree(jsonBody.toString());
 			//traverse(rootNode, 1);
 
 			// parse(jsonBody.toString());
 
 			// Filter API
-//			responseFilter = filterSchemaServiceImpl.filterSchema(list, filter, jsonBody);
-//			// Upload Bucket
-//			if (enableBucket.equals("ON")) {
-//				uploadBucket = uploadBucketServiceImpl.uploadBucket(nameFile, nameBucket, responseFilter.toString());
-//			}
-//
-//			// load BigQuery
-//			if (enableBigQuery.equals("ON")) {
-//				loadBigQuery = loadBigQueryServiceImpl.loadBigQuery(filter, nameFile, nameBucket, nameDataset,
-//						nameTable);
-//			}
+			responseFilter = filterSchemaServiceImpl.filterSchema(list, filter, jsonBody);
+			// Upload Bucket
+			if (enableBucket.equals("ON")) {
+				uploadBucket = uploadBucketServiceImpl.uploadBucket(nameFile, nameBucket, responseFilter.toString());
+			}
+
+			// load BigQuery
+			if (enableBigQuery.equals("ON")) {
+				loadBigQuery = loadBigQueryServiceImpl.loadBigQuery(filter, nameFile, nameBucket, nameDataset,
+						nameTable);
+			}
 
 		} catch (Exception e) {
 			log.debug("Exception {}", e.toString());
 			e.printStackTrace();
 		}
 
-		return response.toString();
+		return responseFilter.toString();
 
 		
 	}
