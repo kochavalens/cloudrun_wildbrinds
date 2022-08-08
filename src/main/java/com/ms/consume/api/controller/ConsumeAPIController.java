@@ -44,7 +44,7 @@ import com.ms.consume.api.models.RequestAPIConsume;
 @CrossOrigin(origins = "*", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.OPTIONS,
 		RequestMethod.HEAD })
 @RestController
-@RequestMapping( value = {"/api"} , consumes = {"application/json"})
+@RequestMapping( value = {"/api"})
 public class ConsumeAPIController {
 	
 	private static Logger log = LoggerFactory.getLogger(ConsumeAPIController.class);
@@ -62,6 +62,14 @@ public class ConsumeAPIController {
 	@Autowired
 	public ConsumeAPIController(RestTemplate resTemplare) {
 		this.restTemplate = restTemplate;
+	}
+	
+	@GetMapping("/test")
+	public String consume() {
+		
+		String response = "TEST";
+		return response;
+		
 	}
 
 	@GetMapping("/consume")
