@@ -73,8 +73,8 @@ public class ConsumeAPIController {
 	}
 
 	@GetMapping("/consume")
-	public Object consumeAPI(@RequestBody String request) {
-		
+	public String consumeAPI(@RequestBody String request) {
+
 		Object response = null;
 		JSONObject jsonBody = null;
 		String jsonResultToBucket = "";
@@ -173,9 +173,9 @@ public class ConsumeAPIController {
 			log.debug("Exception {}", e.toString());
 			e.printStackTrace();
 		}
-		
-		return responseFilter;
-		
+
+		return responseFilter.toString();
+
 	}
 	
 	public void parse(String json) throws JsonMappingException, JsonProcessingException  {
