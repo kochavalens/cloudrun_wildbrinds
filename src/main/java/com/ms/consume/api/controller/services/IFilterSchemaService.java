@@ -1,10 +1,11 @@
 package com.ms.consume.api.controller.services;
 
-import org.json.simple.JSONArray;
+import java.io.IOException;
+
 import org.json.simple.JSONObject;
 
 public interface IFilterSchemaService {
 	
-	public Object filterSchema(Object list, JSONArray filter, JSONObject jsonBody);
+	public Object filterSchemaBody(String list, String[] filter, JSONObject jsonBody) throws IOException;
 
 }

@@ -1,9 +1,7 @@
 package com.ms.consume.api.controller.services;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import org.json.simple.JSONArray;
 import org.springframework.stereotype.Service;
 
 import com.google.cloud.bigquery.BigQuery;
@@ -23,15 +21,15 @@ import com.google.cloud.bigquery.TableId;
 @Service
 public class LoadBigQueryServiceImpl implements ILoadBigQueryService {
 
-	public Object loadBigQuery(JSONArray filter, String nameFile, String nameBucket, String nameDataset, String nameTable) throws Exception {
+	public Object loadBigQuery(String[] filter, String nameFile, String nameBucket, String nameDataset, String nameTable) throws Exception {
 		// TODO(developer): Replace these variables before running the sample.
 		String datasetName = nameDataset;
 		String tableName = nameTable;
 		String sourceUri = "https://storage.cloud.google.com/" + nameBucket + "/" + nameFile;
 
 		ArrayList<Field> field = new ArrayList<Field>();	
-		for (int i = 0; i < filter.size(); i++) {
-			field.add(Field.of(filter.get(i).toString().replace("#","_"), StandardSQLTypeName.STRING));			
+		for (int i = 0; i < filter.length; i++) {
+			field.add(Field.of(filter[i].toString().replace("#","_"), StandardSQLTypeName.STRING));			
 		}
 		Schema schema = Schema.of(field);
 		loadCsvFromGcs(datasetName, tableName, sourceUri, schema);
@@ -39,6 +37,7 @@ public class LoadBigQueryServiceImpl implements ILoadBigQueryService {
 		return schema;
 	}
 
+	@SuppressWarnings("unused")
 	public Object loadCsvFromGcs(String datasetName, String tableName, String sourceUri, Schema schema) {
 		
 		try {

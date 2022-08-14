@@ -1,15 +1,10 @@
 package com.ms.consume.api.controller.services;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.google.auth.Credentials;
-import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
@@ -20,14 +15,14 @@ import com.google.cloud.storage.StorageOptions;
 @Service
 public class UploadBucketServiceImpl implements IUploadBucketService {
 	
+	@SuppressWarnings("unused")
 	private static Logger log = LoggerFactory.getLogger(UploadBucketServiceImpl.class);
 	
+	@SuppressWarnings("unused")
 	public Object uploadBucket(String nameFile, String nameBucket, String csv) {
 		
-		Credentials credentials = null;
-		//credentials = GoogleCredentials.fromStream(new FileInputStream("c:/bbdd-wild-lama-b1759cfc195e.json"));
+		Credentials credentials = null;		
 		Storage storage = StorageOptions.newBuilder().setProjectId("bbdd-wild-lama").build().getService();
-		//Storage storage = StorageOptions.newBuilder().setCredentials(credentials).setProjectId("bbdd-wild-lama").build().getService();
 		
 		String contentType = "application/csv";
 		StorageClass storageClass = StorageClass.STANDARD;
